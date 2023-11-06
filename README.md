@@ -52,7 +52,7 @@ OMP_NUM_THREADS=1 python -m torch.distributed.launch --nproc_per_node=8 run_mae_
         --opt adamw \
         --opt_betas 0.9 0.95 \
         --warmup_epochs 40 \
-        --epochs 1600 \
+        --epochs 800 \
         --output_dir ../../auto-tmp/output_dir
 ```
 

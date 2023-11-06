@@ -87,17 +87,27 @@ def main(args):
 
     with open(args.img_path, 'rb') as f:
         img = Image.open(f)
-        img.convert('RGB')
+        img = img.resize((224, 224))
+        img = img.convert('RGB')
         print("img path:", args.img_path)
 
     transforms = DataAugmentationForMAE(args)
-    img, bool_masked_pos = transforms(img)
+    _, bool_masked_pos = transforms(img)
     bool_masked_pos = torch.from_numpy(bool_masked_pos)
+
+    imagenet_mean = np.array([0.485, 0.456, 0.406])
+    imagenet_std = np.array([0.229, 0.224, 0.225])
+    img = np.array(img) / 255.
+    assert img.shape == (224, 224, 3)
+    img = img - imagenet_mean
+    img = img / imagenet_std
+    img = torch.tensor(img)
 
     with torch.no_grad():
         img = img[None, :]
+        img = torch.einsum('nhwc->nchw', img)
         bool_masked_pos = bool_masked_pos[None, :]
-        img = img.to(device, non_blocking=True)
+        img = img.to(device, non_blocking=True).float()
         bool_masked_pos = bool_masked_pos.to(device, non_blocking=True).flatten(1).to(torch.bool)
         outputs = model(img, bool_masked_pos)
 
