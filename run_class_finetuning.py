@@ -320,7 +320,7 @@ def main(args, ds_init):
                 print(f"Removing key {k} from pretrained checkpoint")
                 del checkpoint_model[k]
 
-        all_keys = list(checkpoint_model.keys())
+        alsl_keys = list(checkpoint_model.keys())
         new_dict = OrderedDict()
         for key in all_keys:
             if key.startswith('backbone.'):

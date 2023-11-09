@@ -6,6 +6,8 @@
 # https://github.com/facebookresearch/dino
 # --------------------------------------------------------'
 import os
+
+import numpy as np
 import torch
 
 from torchvision import datasets, transforms
@@ -18,6 +20,7 @@ from timm.data import create_transform
 from masking_generator import RandomMaskingGenerator
 from dataset_folder import ImageFolder
 
+from cv2 import Canny
 
 class DataAugmentationForMAE(object):
     def __init__(self, args):
@@ -47,9 +50,45 @@ class DataAugmentationForMAE(object):
         repr += ")"
         return repr
 
+#   add canny
+class DataAugmentationForMAE_with_Canny(object):
+    def __init__(self, args):
+        imagenet_default_mean_and_std = args.imagenet_default_mean_and_std
+        mean = IMAGENET_INCEPTION_MEAN if not imagenet_default_mean_and_std else IMAGENET_DEFAULT_MEAN
+        std = IMAGENET_INCEPTION_STD if not imagenet_default_mean_and_std else IMAGENET_DEFAULT_STD
+
+        self.transform = transforms.Compose([
+            transforms.ToTensor()
+        ])
+
+
+        self.Resize = transforms.Resize([224, 224])
+
+        self.masked_position_generator = RandomMaskingGenerator(
+            args.window_size, args.mask_ratio
+        )
+
+    def __call__(self, image):
+        crop_pic = self.Resize(image)
+        canny_pic = Canny(np.array(crop_pic), 50, 125)
+
+        return self.transform(crop_pic), self.masked_position_generator(), \
+               torch.repeat_interleave(torch.tensor(canny_pic).unsqueeze(dim=0), 3, dim=0)
+
+    def __repr__(self):
+        repr = "(DataAugmentationForBEiT,\n"
+        repr += "  transform = %s,\n" % str(self.transform)
+        repr += "  Masked position generator = %s,\n" % str(self.masked_position_generator)
+        repr += ")"
+        return repr
 
 def build_pretraining_dataset(args):
     transform = DataAugmentationForMAE(args)
+    print("Data Aug = %s" % str(transform))
+    return ImageFolder(args.data_path, transform=transform)
+
+def build_pretraining_dataset_with_Canny(args):
+    transform = DataAugmentationForMAE_with_Canny(args)
     print("Data Aug = %s" % str(transform))
     return ImageFolder(args.data_path, transform=transform)
 
