@@ -54,6 +54,20 @@ OMP_NUM_THREADS=1 python -m torch.distributed.launch --nproc_per_node=8 run_mae_
         --warmup_epochs 40 \
         --epochs 800 \
         --output_dir ../../auto-tmp/output_dir
+        
+        
+OMP_NUM_THREADS=1 python -m torch.distributed.launch --nproc_per_node=2 run_mae_pretraining.py \
+        --data_path ../../autodl-tmp/archive/train_valid_test/train/ \
+        --mask_ratio 0.75 \
+        --model pretrain_mae_base_patch16_224 \
+        --batch_size 384 \
+        --opt adamw \
+        --opt_betas 0.9 0.95 \
+        --warmup_epochs 40 \
+        --epochs 800 \
+        --output_dir ../../autodl-tmp/output_dir
+```
+
 ```
 
 2. Finetune

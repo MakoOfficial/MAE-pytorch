@@ -20,7 +20,7 @@ from pathlib import Path
 from timm.models import create_model
 from optim_factory import create_optimizer
 
-from datasets import build_pretraining_dataset
+from datasets import build_pretraining_dataset, build_pretraining_dataset_with_Canny
 from engine_for_pretraining import train_one_epoch
 from utils import NativeScalerWithGradNormCount as NativeScaler
 import utils
@@ -154,7 +154,7 @@ def main(args):
     args.patch_size = patch_size
 
     # get dataset
-    dataset_train = build_pretraining_dataset(args)
+    dataset_train = build_pretraining_dataset_with_Canny(args)
 
     if True:  # args.distributed:
         num_tasks = utils.get_world_size()
