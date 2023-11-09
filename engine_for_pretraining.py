@@ -40,8 +40,10 @@ def train_one_epoch(model: torch.nn.Module, data_loader: Iterable, optimizer: to
                     param_group["weight_decay"] = wd_schedule_values[it]
 
         images, bool_masked_pos, canny = batch
-        images = images.to(device, non_blocking=True)
-        canny = canny.to(device, non_blocking=True)
+        images = images.to(device, non_blocking=True).float()
+        # print(f"images shape is {images.shape}")
+        canny = canny.to(device, non_blocking=True).float()
+        # print(f"canny shape is {canny.shape}")
         bool_masked_pos = bool_masked_pos.to(device, non_blocking=True).flatten(1).to(torch.bool)
 
         # import pdb; pdb.set_trace()
@@ -54,6 +56,7 @@ def train_one_epoch(model: torch.nn.Module, data_loader: Iterable, optimizer: to
 
             if normlize_target:
                 images_squeeze = rearrange(unnorm_images, 'b c (h p1) (w p2) -> b (h w) (p1 p2) c', p1=patch_size, p2=patch_size)
+                # print(f"images_squeeze:{type(images_squeeze)}")
                 images_norm = (images_squeeze - images_squeeze.mean(dim=-2, keepdim=True)
                     ) / (images_squeeze.var(dim=-2, unbiased=True, keepdim=True).sqrt() + 1e-6)
                 # we find that the mean is about 0.48 and standard deviation is about 0.08.
