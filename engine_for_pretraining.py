@@ -39,10 +39,10 @@ def train_one_epoch(model: torch.nn.Module, data_loader: Iterable, optimizer: to
                 if wd_schedule_values is not None and param_group["weight_decay"] > 0:
                     param_group["weight_decay"] = wd_schedule_values[it]
 
-        images, bool_masked_pos, canny = batch
+        images, bool_masked_pos = batch
         images = images.to(device, non_blocking=True).float()
         # print(f"images shape is {images.shape}")
-        canny = canny.to(device, non_blocking=True).float()
+        # canny = canny.to(device, non_blocking=True).float()
         # print(f"canny shape is {canny.shape}")
         bool_masked_pos = bool_masked_pos.to(device, non_blocking=True).flatten(1).to(torch.bool)
 
@@ -52,7 +52,7 @@ def train_one_epoch(model: torch.nn.Module, data_loader: Iterable, optimizer: to
             mean = torch.as_tensor(IMAGENET_DEFAULT_MEAN).to(device)[None, :, None, None]
             std = torch.as_tensor(IMAGENET_DEFAULT_STD).to(device)[None, :, None, None]
             # unnorm_images = images * std + mean  # in [0, 1]
-            unnorm_images = canny
+            unnorm_images = images
 
             if normlize_target:
                 images_squeeze = rearrange(unnorm_images, 'b c (h p1) (w p2) -> b (h w) (p1 p2) c', p1=patch_size, p2=patch_size)

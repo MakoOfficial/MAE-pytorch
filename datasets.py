@@ -72,8 +72,7 @@ class DataAugmentationForMAE_with_Canny(object):
         crop_pic = self.Resize(image)
         canny_pic = Canny(np.array(crop_pic), 50, 125)
 
-        return self.transform(crop_pic), self.masked_position_generator(), \
-               torch.repeat_interleave(torch.tensor(canny_pic).unsqueeze(dim=0), 3, dim=0)
+        return torch.repeat_interleave(torch.tensor(canny_pic).unsqueeze(dim=0), 3, dim=0), self.masked_position_generator()
 
     def __repr__(self):
         repr = "(DataAugmentationForBEiT,\n"
