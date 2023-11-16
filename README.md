@@ -104,7 +104,7 @@ MODEL_PATH='/path/to/pretrain/checkpoint.pth'
 # Now, it only supports pretrained models with normalized pixel targets
 python run_mae_vis.py ${IMAGE_PATH} ${OUTPUT_DIR} ${MODEL_PATH}
 
-python run_mae_vis.py ../archive/train/9486.png ./output/ ./checkpoint/checkpoint-800_bone.pth
+python run_mae_vis.py ../archive\small-dataset\126/4886.png ./output/ ./checkpoint/Canny/checkpoint-399.pth
 ```
 
 ## Result
