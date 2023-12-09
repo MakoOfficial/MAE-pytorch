@@ -127,6 +127,7 @@ def get_model(args):
         pretrained=False,
         drop_path_rate=args.drop_path,
         drop_block_rate=None,
+        checkpoint_path="./checkpoint/pretrain_mae_vit_base_mask_0.75_400e.pth"
     )
 
     return model
