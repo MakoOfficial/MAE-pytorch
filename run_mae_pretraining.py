@@ -45,7 +45,7 @@ def get_args():
 
     parser.add_argument('--drop_path', type=float, default=0.0, metavar='PCT',
                         help='Drop path rate (default: 0.1)')
-                        
+
     parser.add_argument('--normlize_target', default=False, type=bool,
                         help='normalized the target patch pixels')
 
@@ -127,7 +127,7 @@ def get_model(args):
         pretrained=False,
         drop_path_rate=args.drop_path,
         drop_block_rate=None,
-        checkpoint_path="./checkpoint/pretrain_mae_vit_base_mask_0.75_400e.pth"
+        checkpoint_path="./checkpoint_dict.pth"
     )
 
     return model
@@ -155,7 +155,7 @@ def main(args):
     args.patch_size = patch_size
 
     # get dataset
-    dataset_train = build_pretraining_dataset_with_Canny(args)
+    dataset_train = build_pretraining_dataset(args)
 
     if True:  # args.distributed:
         num_tasks = utils.get_world_size()
